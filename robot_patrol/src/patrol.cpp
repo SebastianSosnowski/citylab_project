@@ -4,6 +4,7 @@
 #include "rclcpp/rclcpp.hpp"
 #include "sensor_msgs/msg/laser_scan.hpp"
 #include <chrono>
+#include <cmath>
 
 class Patrol : public rclcpp::Node {
 public:
@@ -37,16 +38,48 @@ private:
       {"Front_Right", {189, 199}}, // +20 deg
       {"Front_Left", {0, 10}},     // -20 deg
       {"Left", {11, 50}},          // -90 deg
-      {"Front_Right", {150, 188}}, // +90 deg
+      {"Right", {150, 188}},       // +90 deg
   };
   bool front_detected_ = false;
 
   void
   laserscan_callback(const sensor_msgs::msg::LaserScan::ConstSharedPtr msg) {
 
+    std::map<std::string, double> min_distances;
+
+    // 1. odczyt wszystkich scanow z 180st
+    // 2. odrzucenie niepoprawnych wartosci
+    for (const auto &sector : this->sectors_) {
+      min_distances[sector.first] = get_min_distance(msg, sector.second);
+    }
+    // 3. Sprawdzenie czy front detected -> set flag
+    // 4. Jak flaga, to wyszukanie max wartosci i wybranie w którą strone
+    // skręcic
+
     RCLCPP_INFO(this->get_logger(),
                 "Closest obstacle: index=%ld, angle=%.2f rad, distance=%.2f",
                 index, angle, *min_it);
+  }
+
+  double get_min_distance(const sensor_msgs::msg::LaserScan::SharedPtr msg,
+                          std::pair<int, int> sector) {
+    double min_distance = std::numeric_limits<double>::infinity();
+
+    for (int i = sector.first; i <= sector.second; i++) {
+      double scan = msg->ranges[i];
+
+      if (!std::isfinite(scan)) {
+        continue;
+      }
+
+      if (scan < msg->range_min || scan > msg->range_max) {
+        continue;
+      }
+
+      min_distance = std::min(min_distance, scan);
+    }
+
+    return min_distance;
   }
 };
 
