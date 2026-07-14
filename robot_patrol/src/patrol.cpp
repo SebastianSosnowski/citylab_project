@@ -3,8 +3,11 @@
 #include "rclcpp/node.hpp"
 #include "rclcpp/rclcpp.hpp"
 #include "sensor_msgs/msg/laser_scan.hpp"
+#include <algorithm>
 #include <chrono>
 #include <cmath>
+
+enum class MoveDirection { FORWARD, LEFT, RIGHT };
 
 class Patrol : public rclcpp::Node {
 public:
@@ -14,7 +17,7 @@ public:
         rclcpp::QoS(10).reliability(rclcpp::ReliabilityPolicy::Reliable);
     subscriber_laser_ = this->create_subscription<sensor_msgs::msg::LaserScan>(
         "/fastbot_1/scan", qos_laser,
-        [this](sensor_msgs::msg::LaserScan::ConstSharedPtr msg) {
+        [this](sensor_msgs::msg::LaserScan::SharedPtr msg) {
           this->laserscan_callback(msg);
         });
     // Init command Publisher
@@ -27,8 +30,10 @@ public:
   }
 
 private:
-  rclcpp::Publisher<std_msgs::msg::String>::SharedPtr status_publisher_;
+  rclcpp::Publisher<geometry_msgs::msg::Twist>::SharedPtr command_publisher_;
   rclcpp::TimerBase::SharedPtr timer_;
+  MoveDirection move_direction_ = MoveDirection::FORWARD;
+
   void timer_callback() { auto cmd = geometry_msgs::msg::Twist(); }
 
 private:
@@ -40,10 +45,9 @@ private:
       {"Left", {11, 50}},          // -90 deg
       {"Right", {150, 188}},       // +90 deg
   };
-  bool front_detected_ = false;
+  double FRONT_THRESHOLD = 0.35;
 
-  void
-  laserscan_callback(const sensor_msgs::msg::LaserScan::ConstSharedPtr msg) {
+  void laserscan_callback(const sensor_msgs::msg::LaserScan::SharedPtr msg) {
 
     std::map<std::string, double> min_distances;
 
@@ -55,10 +59,13 @@ private:
     // 3. Sprawdzenie czy front detected -> set flag
     // 4. Jak flaga, to wyszukanie max wartosci i wybranie w którą strone
     // skręcic
+    if (_front_detected(min_distances)) {
+      choose_safest_direction(min_distances);
+    }
 
-    RCLCPP_INFO(this->get_logger(),
-                "Closest obstacle: index=%ld, angle=%.2f rad, distance=%.2f",
-                index, angle, *min_it);
+    // RCLCPP_INFO(this->get_logger(),
+    //             "Closest obstacle: index=%ld, angle=%.2f rad, distance=%.2f",
+    //             index, angle, *min_it);
   }
 
   double get_min_distance(const sensor_msgs::msg::LaserScan::SharedPtr msg,
@@ -80,6 +87,20 @@ private:
     }
 
     return min_distance;
+  }
+
+  bool _front_detected(const std::map<std::string, double> &min_distances) {
+    return (min_distances.at("Front_Left") < FRONT_THRESHOLD or
+            min_distances.at("Front_Right") < FRONT_THRESHOLD);
+  }
+  void
+  choose_safest_direction(const std::map<std::string, double> &max_distances) {
+    if (std::max(max_distances.at("Front_Left"), max_distances.at("Left")) >
+        std::max(max_distances.at("Front_Right"), max_distances.at("Right"))) {
+      move_direction_ = MoveDirection::LEFT;
+    } else {
+      move_direction_ = MoveDirection::RIGHT;
+    }
   }
 };
 
