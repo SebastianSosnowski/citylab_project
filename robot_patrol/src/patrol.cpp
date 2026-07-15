@@ -72,6 +72,8 @@ private:
 
     if (_front_detected(min_distances)) {
       choose_safest_direction(max_distances);
+    } else {
+      move_direction_ = MoveDirection::FORWARD;
     }
   }
 
