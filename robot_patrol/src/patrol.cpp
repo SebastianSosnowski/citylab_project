@@ -16,13 +16,12 @@ public:
     auto qos_laser =
         rclcpp::QoS(10).reliability(rclcpp::ReliabilityPolicy::Reliable);
     subscriber_laser_ = this->create_subscription<sensor_msgs::msg::LaserScan>(
-        "/fastbot_1/scan", qos_laser,
-        [this](sensor_msgs::msg::LaserScan::SharedPtr msg) {
+        "/scan", qos_laser, [this](sensor_msgs::msg::LaserScan::SharedPtr msg) {
           this->laserscan_callback(msg);
         });
     // Init command Publisher
-    command_publisher_ = this->create_publisher<geometry_msgs::msg::Twist>(
-        "/fastbot_1/cmd_vel", 10);
+    command_publisher_ =
+        this->create_publisher<geometry_msgs::msg::Twist>("/cmd_vel", 10);
     auto timer_period = std::chrono::milliseconds(100);
     timer_ =
         this->create_wall_timer(timer_period, [this] { timer_callback(); });
