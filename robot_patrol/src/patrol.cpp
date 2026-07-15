@@ -34,7 +34,19 @@ private:
   rclcpp::TimerBase::SharedPtr timer_;
   MoveDirection move_direction_ = MoveDirection::FORWARD;
 
-  void timer_callback() { auto cmd = geometry_msgs::msg::Twist(); }
+  void timer_callback() {
+    auto cmd = geometry_msgs::msg::Twist();
+    if (move_direction_ == MoveDirection::FORWARD) {
+      cmd.linear.x = 0.1;
+    } else if (move_direction_ == MoveDirection::LEFT) {
+      cmd.linear.x = 0.05;
+      cmd.angular.z = 0.5;
+    } else {
+      cmd.linear.x = 0.05;
+      cmd.angular.z = -0.5;
+    }
+    command_publisher_->publish(cmd);
+  }
 
 private:
   rclcpp::Subscription<sensor_msgs::msg::LaserScan>::SharedPtr
