@@ -63,7 +63,7 @@ Visualization Manager:
         Durability Policy: Volatile
         History Policy: Keep Last
         Reliability Policy: Reliable
-        Value: /fastbot_1_robot_description
+        Value: /robot_description
       Enabled: true
       Links:
         All Links Enabled: true
@@ -143,7 +143,7 @@ Visualization Manager:
         Filter size: 10
         History Policy: Keep Last
         Reliability Policy: Reliable
-        Value: /fastbot_1/scan
+        Value: /scan
       Use Fixed Frame: true
       Use rainbow: true
       Value: true
@@ -241,7 +241,7 @@ Visualization Manager:
   Enabled: true
   Global Options:
     Background Color: 48; 48; 48
-    Fixed Frame: fastbot_1_odom
+    Fixed Frame: odom
     Frame Rate: 30
   Name: root
   Tools:
@@ -284,7 +284,7 @@ Visualization Manager:
   Views:
     Current:
       Class: rviz_default_plugins/Orbit
-      Distance: 3.5
+      Distance: 2.710399866104126
       Enable Stereo Rendering:
         Stereo Eye Separation: 0.05999999865889549
         Stereo Focal Distance: 1
@@ -306,6 +306,26 @@ Visualization Manager:
     Saved:
       - Class: rviz_default_plugins/Orbit
         Distance: 3.5
+        Enable Stereo Rendering:
+          Stereo Eye Separation: 0.05999999865889549
+          Stereo Focal Distance: 1
+          Swap Stereo Eyes: false
+          Value: false
+        Focal Point:
+          X: 0
+          Y: 0
+          Z: 0
+        Focal Shape Fixed Size: true
+        Focal Shape Size: 0.05000000074505806
+        Invert Z Axis: false
+        Name: Orbit
+        Near Clip Distance: 0.10000000149011612
+        Pitch: 1.5697963237762451
+        Target Frame: <Fixed Frame>
+        Value: Orbit (rviz_default_plugins)
+        Yaw: 3.141590118408203
+      - Class: rviz_default_plugins/Orbit
+        Distance: 2.710399866104126
         Enable Stereo Rendering:
           Stereo Eye Separation: 0.05999999865889549
           Stereo Focal Distance: 1
