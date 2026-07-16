@@ -59,6 +59,8 @@ private:
     std::map<Sector, double> min_distances;
     std::map<Sector, double> max_distances;
 
+    calculate_sectors(msg);
+
     for (const auto &sector : this->sectors_) {
       min_distances[sector.first] = get_min_distance(msg, sector.second);
 
@@ -70,6 +72,34 @@ private:
     } else {
       move_direction_ = MoveDirection::FORWARD;
     }
+  }
+
+  // calculate sectors indicies based on number of rays, angle min and
+  // increment.
+  void calculate_sectors(const sensor_msgs::msg::LaserScan::SharedPtr msg) {
+    const double DEG_TO_RAD = M_PI / 180.0;
+    const double deg_20 = 20.0 * DEG_TO_RAD;
+    const double deg_90 = 90.0 * DEG_TO_RAD;
+    const double deg_360 = 2.0 * M_PI;
+
+    sectors_[Sector::FrontLeft] = {_angle_to_index(0.0, msg),
+                                   _angle_to_index(deg_20, msg)};
+    sectors_[Sector::Left] = {_angle_to_index(deg_20, msg) + 1,
+                              _angle_to_index(deg_90, msg)};
+    sectors_[Sector::FrontRight] = {_angle_to_index(deg_360 - deg_20, msg),
+                                    static_cast<int>(msg->ranges.size()) - 1};
+    sectors_[Sector::Right] = {_angle_to_index(deg_360 - deg_90, msg),
+                               _angle_to_index(deg_360 - deg_20, msg) - 1};
+  }
+
+  int _angle_to_index(double angle,
+                      const sensor_msgs::msg::LaserScan::SharedPtr msg) {
+    int index = static_cast<int>(
+        std::round((angle - msg->angle_min) / msg->angle_increment));
+
+    const int max_index = static_cast<int>(msg->ranges.size()) - 1;
+
+    return std::clamp(index, 0, max_index);
   }
 
   double get_min_distance(const sensor_msgs::msg::LaserScan::SharedPtr msg,
