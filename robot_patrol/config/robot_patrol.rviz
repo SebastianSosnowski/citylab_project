@@ -11,6 +11,7 @@ Panels:
         - /Axes1
         - /TF1
         - /Odometry1
+        - /Odometry1/Topic1
         - /Odometry1/Shape1
       Splitter Ratio: 0.5
     Tree Height: 553
@@ -236,7 +237,7 @@ Visualization Manager:
         Filter size: 10
         History Policy: Keep Last
         Reliability Policy: Reliable
-        Value: ""
+        Value: /fastbot_1/odom
       Value: true
   Enabled: true
   Global Options:
