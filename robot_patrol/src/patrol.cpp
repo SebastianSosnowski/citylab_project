@@ -109,9 +109,9 @@ private:
     for (int i = sector.first; i <= sector.second; i++) {
       double scan = msg->ranges[i];
 
-      _is_valid(scan, msg);
-
-      min_distance = std::min(min_distance, scan);
+      if (_is_valid(scan, msg)) {
+        min_distance = std::min(min_distance, scan);
+      }
     }
 
     return min_distance;
@@ -124,15 +124,15 @@ private:
     for (int i = sector.first; i <= sector.second; i++) {
       double scan = msg->ranges[i];
 
-      _is_valid(scan, msg);
-
-      max_distance = std::max(max_distance, scan);
+      if (_is_valid(scan, msg)) {
+        max_distance = std::max(max_distance, scan);
+      }
     }
 
     return max_distance;
   }
-  bool _is_valid(double scan,
-                 const sensor_msgs::msg::LaserScan::SharedPtr msg) {
+  [[nodiscard]] bool
+  _is_valid(double scan, const sensor_msgs::msg::LaserScan::SharedPtr msg) {
     if (!std::isfinite(scan))
       return false;
     if (scan < msg->range_min || scan > msg->range_max)
