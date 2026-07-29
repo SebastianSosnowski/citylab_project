@@ -10,6 +10,7 @@ find_package(ament_cmake REQUIRED)
 find_package(rclcpp REQUIRED)
 find_package(geometry_msgs REQUIRED)
 find_package(sensor_msgs REQUIRED)
+find_package(custom_interfaces REQUIRED)
 
 add_executable(patrol_executable src/patrol.cpp)
 ament_target_dependencies(patrol_executable 
@@ -18,8 +19,17 @@ ament_target_dependencies(patrol_executable
   geometry_msgs
 )
 
+add_executable(patrol_server_executable src/direction_service.cpp)
+ament_target_dependencies(patrol_server_executable 
+  rclcpp
+  sensor_msgs
+  geometry_msgs
+  custom_interfaces
+)
+
 install(TARGETS 
 	patrol_executable
+	patrol_server_executable
 	DESTINATION lib/${PROJECT_NAME})
 
 install(DIRECTORY launch config DESTINATION share/${PROJECT_NAME}/)
