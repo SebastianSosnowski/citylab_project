@@ -7,7 +7,6 @@
 #include "sensor_msgs/msg/laser_scan.hpp"
 #include <rclcpp/rclcpp.hpp>
 
-enum class MoveDirection { FORWARD, LEFT, RIGHT };
 enum class Sector { FrontLeft, FrontRight, Left, Right };
 
 class DirectionService : public rclcpp::Node {
@@ -46,11 +45,7 @@ private:
         get_min_distance(laser_data, sectors_.at(Sector::FrontLeft));
     min_distances_front[Sector::FrontRight] =
         get_min_distance(laser_data, sectors_.at(Sector::FrontRight));
-    // for (const auto &sector : this->sectors_) {
-    //   min_distances[sector.first] = get_min_distance(msg, sector.second);
 
-    //   max_distances[sector.first] = get_max_distance(msg, sector.second);
-    // }
     if (_front_detected(min_distances_front)) {
       response->direction = choose_safest_direction(laser_data);
     } else {
@@ -99,20 +94,6 @@ private:
     return min_distance;
   }
 
-  //   double get_max_distance(const sensor_msgs::msg::LaserScan::SharedPtr msg,
-  //                           std::pair<int, int> sector) {
-  //     double max_distance = std::numeric_limits<double>::lowest();
-
-  //     for (int i = sector.first; i <= sector.second; i++) {
-  //       double scan = msg->ranges[i];
-
-  //       if (_is_valid(scan, msg)) {
-  //         max_distance = std::max(max_distance, scan);
-  //       }
-  //     }
-
-  //     return max_distance;
-  //   }
   [[nodiscard]] bool _is_valid(double scan,
                                const sensor_msgs::msg::LaserScan &msg) {
     if (!std::isfinite(scan))
@@ -144,39 +125,6 @@ private:
       return "left";
     }
     return "right";
-
-    // Sector safest_sector;
-
-    // if (left_max > right_max) {
-    //   move_direction_ = MoveDirection::LEFT;
-
-    //   if (max_distances.at(Sector::FrontLeft) >
-    //       max_distances.at(Sector::Left)) {
-    //     safest_sector = Sector::FrontLeft;
-    //   } else {
-    //     safest_sector = Sector::Left;
-    //   }
-    // } else {
-    //   move_direction_ = MoveDirection::RIGHT;
-
-    //   if (max_distances.at(Sector::FrontRight) >
-    //       max_distances.at(Sector::Right)) {
-    //     safest_sector = Sector::FrontRight;
-    //   } else {
-    //     safest_sector = Sector::Right;
-    //   }
-    // }
-
-    // RCLCPP_INFO(
-    //     this->get_logger(),
-    //     "Safest direction: %s | Best sector: %s | "
-    //     "Front_Left: %.2f m | Left: %.2f m | "
-    //     "Front_Right: %.2f m | Right: %.2f m",
-    //     move_direction_ == MoveDirection::LEFT ? "LEFT" : "RIGHT",
-    //     _sector_to_string(safest_sector),
-    //     max_distances.at(Sector::FrontLeft), max_distances.at(Sector::Left),
-    //     max_distances.at(Sector::FrontRight),
-    //     max_distances.at(Sector::Right));
   }
 
   const char *_sector_to_string(Sector sector) {
