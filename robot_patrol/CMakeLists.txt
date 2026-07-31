@@ -33,10 +33,19 @@ ament_target_dependencies(patrol_test_server_executable
   custom_interfaces
 )
 
+add_executable(patrol_with_service_executable src/patrol_with_service.cpp)
+ament_target_dependencies(patrol_with_service_executable 
+  rclcpp
+  sensor_msgs
+  custom_interfaces
+  geometry_msgs
+)
+
 install(TARGETS 
 	patrol_executable
 	patrol_server_executable
 	patrol_test_server_executable
+	patrol_with_service_executable
 	DESTINATION lib/${PROJECT_NAME})
 
 install(DIRECTORY launch config DESTINATION share/${PROJECT_NAME}/)
