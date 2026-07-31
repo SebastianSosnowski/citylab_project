@@ -35,6 +35,8 @@ private:
   void direction_callback(const std::shared_ptr<GetDirection::Request> request,
                           std::shared_ptr<GetDirection::Response> response) {
 
+    RCLCPP_INFO(this->get_logger(), "Request Received");
+
     std::map<Sector, double> min_distances_front;
     std::map<Sector, double> max_distances;
     const sensor_msgs::msg::LaserScan &laser_data = request->laser_data;
@@ -51,6 +53,7 @@ private:
     } else {
       response->direction = "forward";
     }
+    RCLCPP_INFO(this->get_logger(), "Request Completed");
   }
 
   // calculate sectors indicies based on number of rays, angle min and

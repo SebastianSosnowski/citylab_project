@@ -9,9 +9,9 @@
 using namespace std::chrono_literals;
 using GetDirection = custom_interfaces::srv::GetDirection;
 
-class TestServiceClient : public rclcpp::Node {
+class PatrolServiceClient : public rclcpp::Node {
 public:
-  TestServiceClient() : Node("test_service_client_node") {
+  PatrolServiceClient() : Node("patrol_service_client_node") {
     // Subscribe to Laser Topic
     auto qos_laser =
         rclcpp::QoS(10).reliability(rclcpp::ReliabilityPolicy::BestEffort);
@@ -42,7 +42,7 @@ public:
     auto timer_period = std::chrono::milliseconds(500);
     timer_ =
         this->create_wall_timer(timer_period, [this] { call_service_timer(); });
-    RCLCPP_INFO(this->get_logger(), "Service Test Ready...");
+    RCLCPP_INFO(this->get_logger(), "Client Ready");
   }
 
   void send_request(const std::shared_ptr<GetDirection::Request> request) {
@@ -51,7 +51,7 @@ public:
           try {
             const auto response = future.get();
 
-            RCLCPP_INFO(this->get_logger(), "Direction to move: %s",
+            RCLCPP_INFO(this->get_logger(), "Response Received: %s",
                         response->direction.c_str());
 
             publish_command(response->direction);
@@ -84,6 +84,7 @@ private:
     auto request = std::make_shared<GetDirection::Request>();
     request->laser_data = laser_data_;
     send_request(request);
+    RCLCPP_INFO(this->get_logger(), "Request Sent");
   }
 
   void publish_command(const std::string &direction) {
@@ -111,7 +112,7 @@ int main(int argc, char **argv) {
   rclcpp::init(argc, argv);
 
   // Declare the node constructor
-  auto client = std::make_shared<TestServiceClient>();
+  auto client = std::make_shared<PatrolServiceClient>();
 
   rclcpp::spin(client);
 
