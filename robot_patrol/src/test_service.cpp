@@ -13,7 +13,7 @@ public:
     auto qos_laser =
         rclcpp::QoS(10).reliability(rclcpp::ReliabilityPolicy::BestEffort);
     subscriber_laser_ = this->create_subscription<sensor_msgs::msg::LaserScan>(
-        "/fastbot_1/scan", qos_laser,
+        "/scan", qos_laser,
         [this](sensor_msgs::msg::LaserScan::ConstSharedPtr msg) {
           this->laserscan_callback(msg);
         });
