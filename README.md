@@ -30,25 +30,23 @@ A patrol system for a mobile robot which implements simple obstacle avoidance. T
 <!-- Add a lab photo or real-robot patrol GIF at docs/images/real-robot.gif. -->
 <!-- ![Patrol running on the real robot](docs/images/real-robot.gif) -->
 
+
 <p align="center">
-  <video src="docs/videos/patrol_sim.mp4" controls width="800"></video>
-  <br/>
+  <img src="docs/animations/sim_patrol.gif" width="800" alt="Patrol in Simulation">
+  <br>
   <strong>Patrol in Simulation</strong>
-  <br/>
 </p>
 
 <p align="center">
-  <video src="docs/videos/patrol_real.mp4" controls width="800"></video>
-  <br/>
+  <img src="docs/animations/real_patrol.gif" width="800" alt="Patrol in Real">
+  <br>
   <strong>Patrol in real environment</strong>
-  <br/>
 </p>
 
 <p align="center">
-  <video src="docs/videos/rviz_sim.mp4" controls width="800"></video>
-  <br/>
+  <img src="docs/animations/rviz_sim.gif" width="800" alt="Rviz Visualization">
+  <br>
   <strong>Rviz Visualization</strong>
-  <br/>
 </p>
 
 ## Build and run
